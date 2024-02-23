@@ -24,13 +24,10 @@ pipeline{
                         )
             }
         }
-         stage('Unit Test maven'){
-         
+         stage('Unit Test maven'){         
          when { expression {  params.action == 'create' } }
-
             steps{
-               script{
-                   
+               script{                   
                    mvnTest()
                }
             }
@@ -38,8 +35,7 @@ pipeline{
          stage('Integration Test maven'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    mvnIntegrationTest()
                }
             }
@@ -47,8 +43,7 @@ pipeline{
         stage('Static code analysis: Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    def SonarQubecredentialsId = 'sonarqube-api'
                    statiCodeAnalysis(SonarQubecredentialsId)
                }
@@ -57,8 +52,7 @@ pipeline{
        stage('Quality Gate Status Check : Sonarqube'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    def SonarQubecredentialsId = 'sonarqube-api'
                    QualityGateStatus(SonarQubecredentialsId)
                }
@@ -67,8 +61,7 @@ pipeline{
         stage('Maven Build : maven'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    mvnBuild()
                }
             }
@@ -76,8 +69,7 @@ pipeline{
         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    dockerBuild("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
                }
             }
@@ -85,8 +77,7 @@ pipeline{
          stage('Docker Image Scan: trivy '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                   
                    dockerImageScan("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
                }
             }
@@ -102,8 +93,7 @@ pipeline{
         stage('Docker Image Push : DockerHub '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{               
                    dockerImagePush("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
                }
             }
@@ -111,8 +101,7 @@ pipeline{
         stage('Docker Image Cleanup : DockerHub '){
          when { expression {  params.action == 'create' } }
             steps{
-               script{
-                   
+               script{                 
                    dockerImageCleanup("${params.ImageName}","${params.ImageTag}","${params.DockerHubUser}")
                }
             }
